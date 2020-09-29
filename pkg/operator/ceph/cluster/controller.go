@@ -390,12 +390,12 @@ func (c *ClusterController) requestClusterDelete(cluster *cephv1.CephCluster) (r
 	}
 
 	if cluster.Spec.CleanupPolicy.AllowUninstallWithVolumes {
-		logger.Info("skipping check for existing PVs as allowUninstallWithVolumes is set to true")
+		logger.Info("Uninstall: skipping check for existing PVs as allowUninstallWithVolumes is set to true")
 	} else {
 		err := c.checkIfVolumesExist(cluster)
 		if err != nil {
 			config.ConditionExport(c.context, c.namespacedName, cephv1.ConditionDeleting, v1.ConditionTrue, "ClusterDeleting", "Failed to delete cluster")
-			logger.Errorf("failed to check if volumes exist. %v", err)
+			logger.Errorf("Uninstall: failed to check if volumes exist. %v", err)
 			return opcontroller.WaitForRequeueIfFinalizerBlocked, false
 		}
 	}
