@@ -382,8 +382,9 @@ func (c *ClusterController) requestClusterDelete(cluster *cephv1.CephCluster) (r
 		for _, daemon := range monitorDaemonList {
 			isDisabled = isMonitoringDisabled(daemon, cluster.Spec)
 			if _, ok := cluster.monitoringChannels[daemon]; ok {
-				if !isDisabled {
+				if !isDisabled && cluster.monitoringChannels[daemon].monitoringRunning {
 					close(cluster.monitoringChannels[daemon].stopChan)
+					cluster.monitoringChannels[daemon].monitoringRunning = false
 				}
 			}
 		}
